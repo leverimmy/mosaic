@@ -17,9 +17,11 @@ from typing import Callable, Generator
 
 ### 1.1 Process, thread, and context switching
 
+sys_exec = lambda fn, *args: os.sys_exec(fn, *args)
 sys_fork = lambda: os.sys_fork()
 sys_spawn = lambda fn, *args: os.sys_spawn(fn, *args)
 sys_sched = lambda: os.sys_sched()
+sys_getpid = lambda: os.sys_getpid()
 
 ### 1.2 Virtual character device
 
@@ -186,7 +188,14 @@ class OperatingSystem:
     def sys_exec(self, func: Callable, *args):
         """Execute a new process with the given function and arguments."""
         def do_exec():
-            self.__init__(lambda: func(*args))  # reinitialize the OS to use the new process
+            self._threads = [Thread(context=func(*args), heap=Heap())]
+            self._current = 0  # reset the current thread
+            self._choices = {func.__name__: lambda: None}
+            self._storage = Storage(persist={}, buf={})
+
+            self._init = func  # update the init function
+            self._trace = []  # reset the trace
+            self._newfork = set()  # reset the new fork set
         return {'exec': (lambda: do_exec())}
 
     @syscall
