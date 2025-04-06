@@ -4,6 +4,7 @@ import sys
 import pygments
 import pygments.lexers
 from pathlib import Path
+from pygments.formatters import HtmlFormatter
 
 if __name__ == '__main__':
     model_str = sys.stdin.read()
@@ -25,7 +26,7 @@ if __name__ == '__main__':
 
     hl = pygments.highlight(src.replace('    ', '  '),
             lexer=pygments.lexers.guess_lexer_for_filename('src.py', src),
-            formatter=pygments.formatters.html.HtmlFormatter(
+            formatter=HtmlFormatter(
                 style='xcode',
                 linenos='inline',
                 linespans=True
