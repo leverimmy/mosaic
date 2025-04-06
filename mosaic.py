@@ -183,6 +183,13 @@ class OperatingSystem:
 #### 2.3.1 Process, thread, and context switching
 
     @syscall
+    def sys_exec(self, func: Callable, *args):
+        """Execute a new process with the given function and arguments."""
+        def do_exec():
+            self.__init__(lambda: func(*args))  # reinitialize the OS to use the new process
+        return {'exec': (lambda: do_exec())}
+
+    @syscall
     def sys_spawn(self, func: Callable, *args):
         """Spawn a heap-sharing new thread executing func(args)."""
         def do_spawn():
