@@ -46,6 +46,7 @@ python3 mosaic.py --check examples/hello.py | python3 -m vis
 System Call         | Behavior
 --------------------|-----------------------------------------------
 `sys_fork()`        | create current thread's heap and context clone
+`sys_exec(f, xs)`   | create a new process executing `f(xs)`
 `sys_spawn(f, xs)`  | spawn a heap-sharing thread executing `f(xs)`
 `sys_write(xs)`     | write string `xs` to a shared console
 `sys_bread(k)`      | return the value of block id `k`
