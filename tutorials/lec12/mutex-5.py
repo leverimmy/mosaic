@@ -1,4 +1,4 @@
-N = 2
+N = 4
 
 def aqcuire():
     while heap.lock != 0:
