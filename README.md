@@ -1,12 +1,28 @@
-# MOSAIC Operating System Model and Checker
+# MOSAIC: Operating System Model and Checker
 
-This is the artifact for Paper #202 of USENIX ATC'23 "The Hitchhiker’s Guide to Operating Systems". (Cherry-picked from the backend of my [course homepage](http://jyywiki.cn/OS/2023/build/lect4.ipynb).)
+## 简介
 
-- [mosaic.py](mosaic.py) - The model checker (zero dependency; self-documented)
-- [vis/](vis/) - The visualization script of an interactive state space explorer
-- [examples/](examples/) - The code examples evaluated in the paper
+这是 [MOSAIC](https://github.com/jiangyy/mosaic) 的修改版，增加了部分 System Call，并增加了 [tutorials](tutorials/) 部分以适配清华大学计算机系《操作系统》课程的讲义。
 
-## The Operating System Model
+**文件结构**
+
+- [mosaic.py](mosaic.py) - The Model Checker
+- [vis/](vis/) - 可视化脚本
+- [examples/](examples/) - 论文中评估的代码示例
+- [tutorials/](tutorials/) - 适配《操作系统》课程的教程内容
+- [CODE_ANALYSIS.md](CODE_ANALYSIS.md) - 对 [mosaic.py](mosaic.py) 代码框架的详细解释
+
+## 环境配置
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+## Detailed Introduction
+
+### The Operating System Model
 
 MOSAIC supports simple applications with "system calls". The program entry is `main()`:
 
@@ -41,7 +57,7 @@ python3 mosaic.py --check examples/hello.py | python3 -m vis
 
 ![](vis/demo.png)
 
-## Modeled System Calls
+### Modeled System Calls
 
 System Call         | Behavior
 --------------------|-----------------------------------------------
@@ -57,11 +73,3 @@ System Call         | Behavior
 `sys_crash()`       | perform a non-deterministic crash
 
 Limitation: system calls are implemented by `yield`. To keep the model checker minimal, one cannot perform system call in a function. (This is not a fundamental limitation and will be addressed in the future.)
-
-## Reproducing Results
-
-```bash
-python3 examples/_reproduce.py
-```
-
-Similar results in Table 2 are expected. Tested on: Python 3.10.9 (macOS Ventura), Python 3.11.2 (Ubuntu 22.04)
