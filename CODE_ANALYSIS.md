@@ -63,6 +63,45 @@
 - `SYSCALLS`：维护所有系统调用的列表。
 - `syscall(func)`：一个装饰器，用于标记系统调用函数并将其名称加入 `SYSCALLS`。
 
+### 1.5 添加新的 System Call
+
+在 `OperatingSystem` 类中添加一个新的方法，并使用 `@syscall` 装饰器标记它。例如，假设我们要添加一个名为 `sys_exec` 的系统调用：
+
+```python
+@syscall
+def sys_exec(self, func: Callable, *args):
+    """Execute a new process with the given function and arguments."""
+    def do_exec():
+        self._threads = [Thread(context=func(*args), heap=Heap())]
+        self._current = 0  # reset the current thread
+        self._choices = {func.__name__: lambda: None}
+        self._storage = Storage(persist={}, buf={})
+
+        self._init = func  # update the init function
+        self._trace = []  # reset the trace
+        self._newfork = set()  # reset the new fork set
+    return {'exec': (lambda: do_exec())}
+```
+
+在 `1. Mosaic system calls` 部分，添加一个全局的 Lambda 函数，使用户可以通过全局调用该系统调用。例如：
+
+```python
+sys_exec = lambda fn, *args: os.sys_exec(fn, *args)
+```
+
+用户可以在应用代码中调用新添加的系统调用。例如：
+
+```python
+def echo(args):
+    sys_write(' '.join(args[1:]))
+
+def main():
+    argv = ['echo', 'this', 'is', 'echo']
+    heap.buf = '0x5f3759df'
+    sys_exec(echo, argv)
+    sys_write('exec() failed\n')
+```
+
 ## 2. 操作系统建模
 
 `OperatingSystem` 类是代码的核心部分，模拟了一个简单的操作系统。以下是对其实现的解析。
